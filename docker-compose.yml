@@ -38,6 +38,7 @@ services:
         chown -R root:root config/certs;
         find . -type d -exec chmod 750 \{\} \;;
         find . -type f -exec chmod 640 \{\} \;;
+        chown -R 1000:1000 config/certs;
         echo "Waiting for Elasticsearch availability";
         until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
         echo "Setting kibana_system password";
@@ -103,6 +104,7 @@ services:
       - certs:/usr/share/apm-server/certs
     ports:
       - ${APM_PORT}:8200
+    user: "apm-server"
     command: >
       apm-server -e
          -E output.elasticsearch.hosts=["es01:9200"]
